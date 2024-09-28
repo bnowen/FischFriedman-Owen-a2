@@ -1,0 +1,23 @@
+---
+title: "Assignment 2"
+author: "Molly F-F & Brittany O"
+date: "2024-09-28"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(gtrendsR)
+library(censusapi)
+```
+
+#Pulling from APIs
+Our first data source is the Google Trends API. Suppose we are interested in the search trends
+for crime and loans in Illinois in the year 2020. We could find this using the following code:
+```{r}
+res <- gtrends(c("crime", "loans"),
+geo = "US-IL",
+time = "2020-01-01 2020-12-31",
+low_search_volume = TRUE)
+plot(res)
+``
