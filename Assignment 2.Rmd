@@ -9,6 +9,7 @@ output: html_document
 library(tidyverse)
 library(gtrendsR)
 library(censusapi)
+library(dplyr)
 ```
 
 #Pulling from APIs
@@ -48,7 +49,16 @@ that city. It might be easier to answer this question if we had the search hits 
 both search terms in two separate variables. That is, each row would represent a unique
 city.
 ```{r}
+head(res$interest_by_city)
+res_city <- as_tibble(res$interest_by_city)
+glimpse(res_city)
 
+res_city_w <- spread(res_city, key = keyword, value = hits)
+head(res_city_w)
+loansbycity <-  res_city_w %>%
+  group_by(location) %>%
+  summarize(loansbycity = sum(loans))
+na.omit(loansbycity)
 ```
 
 • Is there a relationship between the search intensities between the two keywords we used?
