@@ -68,6 +68,10 @@ na.omit(loansbycity)
 • Is there a relationship between the search intensities between the two keywords we used?
 ```{r}
 
+res_both_w <- res_city_w %>% 
+  drop_na() 
+res_both_w
+
 ```
 
 Repeat the above for keywords related to covid. Make sure you use multiple keywords like
