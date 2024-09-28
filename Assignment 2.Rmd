@@ -220,6 +220,7 @@ data.
 Then, create a new data set by joining the Google Trends and the ACS data. Keep only
 cities that appear in both data sets.
 ```{r}
+#anti_join(table1, table2, by="location")
 
 ```
 
@@ -228,8 +229,10 @@ above average median household income and for those that have an below average m
 household income. When building your pipe, start with creating the grouping variable
 and then proceed with the remaining tasks. What conclusions might you draw from
 this?
-```{r}
 
+```{r}
+#calculate average median income
+# data %>% group_by(keyword) %>% filter(income > mean(medianincome, na.rm = TRUE))
 ```
 
 • Is there a relationship between the median household income and the search popularity of
