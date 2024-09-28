@@ -72,9 +72,7 @@ res_both_w <- res_city_w %>%
 res_both_w
 ```
 
-Repeat the above for keywords related to covid. Make sure you use multiple keywords like
-we did above. Try several different combinations and think carefully about words that might
-make sense within this context.
+###Repeat the above for keywords related to covid. Make sure you use multiple keywords like we did above. Try several different combinations and think carefully about words that might make sense within this context.
 ```{r}
 covid.search1 <- gtrends(c("covid", "vaccine"),
 geo = "US-IL",
@@ -144,15 +142,34 @@ head(covid_time_w)
 glimpse(covid_time_w)
 
 covid_time_w$covid <- as.numeric(covid_time_w$covid)
+covid_time_w$mask <- as.numeric(covid_time_w$mask)
+glimpse(covid_time_w)
 
-mean(covid_time_w$covid) #
-median(covid_time_w$covid) #
-var(covid_time_w$covid) #
+mean(covid_time_w$covid, na.rm = TRUE) #47.58824
+median(covid_time_w$covid, na.rm = TRUE) #52 
+var(covid_time_w$covid, na.rm = TRUE) #615.7271
 
-mean(covid_time_w$mask) #
-median(covid_time_w$mask) #
-var(covid_time_w$mask) #
+mean(covid_time_w$mask) #10.43396
+median(covid_time_w$mask) #9
+var(covid_time_w$mask) #40.51959
 ```
+
+```{r}
+head(covid.search4$interest_by_city)
+covid_city <- as_tibble(covid.search4$interest_by_city)
+glimpse(covid_city)
+
+covid_city_w <- spread(covid_city, key = keyword, value = hits)
+head(covid_city_w)
+maskbycity <-  covid_city_w %>%
+  group_by(location) %>%
+  summarize(mask = sum(mask)) %>%
+  arrange(desc(mask))
+
+na.omit(maskbycity)
+#Top 5 cities for 'mask' search results are Minier, Oakdale, Bushnell, Keyesport, Forsyth
+```
+
 #Google Trends + ACS
 
 Once you have a Census access key, save it as a text file, then read this key in the cs_key object. We
