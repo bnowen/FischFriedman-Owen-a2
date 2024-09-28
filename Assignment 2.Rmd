@@ -48,6 +48,8 @@ might be multiple rows for each city if there were hits for both “crime” and
 that city. It might be easier to answer this question if we had the search hits info for
 both search terms in two separate variables. That is, each row would represent a unique
 city.
+
+- Long Lake, Peotone, Rosemont, East Saint Louis, and Ford Heights are the top 5 locations for 'loans' search hits. 
 ```{r}
 head(res$interest_by_city)
 res_city <- as_tibble(res$interest_by_city)
@@ -57,7 +59,9 @@ res_city_w <- spread(res_city, key = keyword, value = hits)
 head(res_city_w)
 loansbycity <-  res_city_w %>%
   group_by(location) %>%
-  summarize(loansbycity = sum(loans))
+  summarize(loans = sum(loans)) %>%
+  arrange(desc(loans))
+
 na.omit(loansbycity)
 ```
 
