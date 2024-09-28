@@ -26,7 +26,20 @@ Answer the following questions for the keywords “crime” and “loans”.
 
 • Find the mean, median and variance of the search hits for the keywords.
 ```{r}
+head(res$interest_over_time)
+res_time <- as_tibble(res$interest_over_time)
+glimpse(res_time)
 
+res_time_w <- spread(res_time, key = keyword, value = hits)
+head(res_time_w)
+
+mean(res_time_w$crime) #51.01887
+median(res_time_w$crime) #51
+var(res_time_w$crime) #67.36502
+
+mean(res_time_w$loans) #62.24528
+median(res_time_w$loans) #60
+var(res_time_w$loans) #98.72714
 ```
 
 • Which cities (locations) have the highest search frequency for loans? Note that there
