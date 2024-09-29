@@ -278,7 +278,7 @@ qplot(hh_income, loans, data=GT_ACS1)
 
 #merge data
 GT_ACS2 <- covid_city_w %>% inner_join(acs_il, by="location")
-head(GT_ACS1)
+head(GT_ACS2)
 
 #calculate average median income
 median_income <- median(GT_ACS2$hh_income, na.rm=T)
@@ -287,12 +287,12 @@ median_income <- median(GT_ACS2$hh_income, na.rm=T)
 #note that the median income is not included here
 GT_ACS2$income2[GT_ACS2$hh_income < median_income] <- "Below avg median HH income"
 GT_ACS2$income2[GT_ACS2$hh_income > median_income] <- "Above avg median HH income"
-table(GT_ACS1$income2)
+table(GT_ACS2$income2)
 
-GT_ACS2 %>% group_by(income2) %>% summarise(crime_hits = mean(crime, na.rm=T),
-                                            loans_hits = mean(loans, na.rm=T))
+GT_ACS2 %>% group_by(income2) %>% summarise(covid_hits = mean(covid, na.rm=T),
+                                            mask_hits = mean(mask, na.rm=T))
 
-qplot(hh_income, crime, data=GT_ACS2)
-qplot(hh_income, loans, data=GT_ACS2)
+qplot(hh_income, covid, data=GT_ACS2)
+qplot(hh_income, mask, data=GT_ACS2)
 
 ```
