@@ -249,13 +249,24 @@ this?
 
 ```{r}
 #calculate average median income
-# data %>% group_by(keyword) %>% filter(income > mean(medianincome, na.rm = TRUE))
+median_income <- median(GT_ACS1$hh_income, na.rm=T)
+
+#note that the median income is not included here
+GT_ACS1$income2[GT_ACS1$hh_income < median_income] <- "Below avg median HH income"
+GT_ACS1$income2[GT_ACS1$hh_income > median_income] <- "Above avg median HH income"
+table(GT_ACS1$income2)
+
+GT_ACS1 %>% group_by(income2) %>% summarise(crime_hits = mean(crime, na.rm=T),
+                                            loans_hits = mean(loans, na.rm=T))
 ```
+
+TKTKTK add things here
 
 • Is there a relationship between the median household income and the search popularity of
 the Google trends terms? Describe the relationship and use a scatterplot with qplot().
 ```{r}
-
+qplot(hh_income, crime, data=GT_ACS1)
+qplot(hh_income, loans, data=GT_ACS1)
 ```
 
 Repeat the above steps using the covid data and the ACS data.
