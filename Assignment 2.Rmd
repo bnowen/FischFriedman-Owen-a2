@@ -26,6 +26,11 @@ plot(res)
 Answer the following questions for the keywords “crime” and “loans”.
 
 • Find the mean, median and variance of the search hits for the keywords.
+
+CRIME:                     LOANS
+Mean: 51.01887             Mean: 62.24528
+Median: 51                 Median: 60
+Var.: 67.36502             Var: 98.72714
 ```{r}
 head(res$interest_over_time)
 res_time <- as_tibble(res$interest_over_time)
@@ -128,7 +133,6 @@ time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search7)
 ```
-
 ```{r}
 covid.search8 <- gtrends(c("covid", "biden"),
 geo = "US-IL",
@@ -269,7 +273,26 @@ qplot(hh_income, crime, data=GT_ACS1)
 qplot(hh_income, loans, data=GT_ACS1)
 ```
 
-Repeat the above steps using the covid data and the ACS data.
+###Repeat the above steps using the covid data and the ACS data.
 ```{r}
+
+#merge data
+GT_ACS2 <- covid_city_w %>% inner_join(acs_il, by="location")
+head(GT_ACS1)
+
+#calculate average median income
+median_income <- median(GT_ACS2$hh_income, na.rm=T)
+
+
+#note that the median income is not included here
+GT_ACS2$income2[GT_ACS2$hh_income < median_income] <- "Below avg median HH income"
+GT_ACS2$income2[GT_ACS2$hh_income > median_income] <- "Above avg median HH income"
+table(GT_ACS1$income2)
+
+GT_ACS2 %>% group_by(income2) %>% summarise(crime_hits = mean(crime, na.rm=T),
+                                            loans_hits = mean(loans, na.rm=T))
+
+qplot(hh_income, crime, data=GT_ACS2)
+qplot(hh_income, loans, data=GT_ACS2)
 
 ```
