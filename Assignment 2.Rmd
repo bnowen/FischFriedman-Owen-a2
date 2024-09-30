@@ -29,9 +29,9 @@ Answer the following questions for the keywords “crime” and “loans”.
 • Find the mean, median and variance of the search hits for the keywords:
 
 CRIME:                     LOANS
-Mean: 51.01887             Mean: 62.24528
-Median: 51                 Median: 60
-Var.: 67.36502             Var: 98.72714
+Mean: 49.81132             Mean: 61.01887
+Median: 50                 Median: 58
+Var.: 63.92525             Var: 103.5573
 ```{r, cache=TRUE}
 head(res$interest_over_time)
 res_time <- as_tibble(res$interest_over_time)
@@ -40,14 +40,14 @@ glimpse(res_time)
 res_time_w <- spread(res_time, key = keyword, value = hits)
 head(res_time_w)
 
-mean(res_time_w$crime) #51.01887
-median(res_time_w$crime) #51
-var(res_time_w$crime) #67.36502
+mean(res_time_w$crime) #49.81132
+median(res_time_w$crime) #50
+var(res_time_w$crime) #63.92525
 
 
-mean(res_time_w$loans) #62.24528
-median(res_time_w$loans) #60
-var(res_time_w$loans) #98.72714
+mean(res_time_w$loans) #61.01887
+median(res_time_w$loans) #58
+var(res_time_w$loans) #103.5573
 ```
 
 • Which cities (locations) have the highest search frequency for loans? Note that there
@@ -91,49 +91,49 @@ time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search1)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search2 <- gtrends(c("covid", "test"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search2)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search3 <- gtrends(c("covid", "lockdown"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search3)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search4 <- gtrends(c("covid", "mask"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search4)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search5 <- gtrends(c("covid", "distancing"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search5)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search6 <- gtrends(c("covid", "China"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search6)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search7 <- gtrends(c("covid", "trump"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search7)
 ```
-```{r}
+```{r, cache=TRUE}
 covid.search8 <- gtrends(c("covid", "biden"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
@@ -155,16 +155,16 @@ covid_time_w$covid <- as.numeric(covid_time_w$covid)
 covid_time_w$mask <- as.numeric(covid_time_w$mask)
 glimpse(covid_time_w)
 
-mean(covid_time_w$covid, na.rm = TRUE) #47.58824
-median(covid_time_w$covid, na.rm = TRUE) #52 
-var(covid_time_w$covid, na.rm = TRUE) #615.7271
+mean(covid_time_w$covid, na.rm = TRUE) #46
+median(covid_time_w$covid, na.rm = TRUE) #49
+var(covid_time_w$covid, na.rm = TRUE) #590.96
 
-mean(covid_time_w$mask) #10.43396
-median(covid_time_w$mask) #9
-var(covid_time_w$mask) #40.51959
+mean(covid_time_w$mask) #9.962264
+median(covid_time_w$mask) #8
+var(covid_time_w$mask) #37.61393
 ```
  
- "Mask" shows the strongest frequency and closely resembles the "covid" search hits in its pattern. 
+ "Mask" crested in April 2020 and closely resembles the "covid" search hits in its pattern. 
  XX, XX, XX, XX, and XX are the top 5 locations for 'mask' search hits. 
 ```{r, cache=TRUE}
 head(covid.search4$interest_by_city)
