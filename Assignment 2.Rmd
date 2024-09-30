@@ -165,7 +165,7 @@ var(covid_time_w$mask) #37.61393
 ```
  
  "Mask" crested in April 2020 and closely resembles the "covid" search hits in its pattern. 
- XX, XX, XX, XX, and XX are the top 5 locations for 'mask' search hits. 
+ Minier, Waterman, Oakdale, Palos Heights, and Philo are the top 5 locations for 'mask' search hits. 
 ```{r, cache=TRUE}
 head(covid.search4$interest_by_city)
 covid_city <- as_tibble(covid.search4$interest_by_city)
