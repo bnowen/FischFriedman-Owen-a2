@@ -16,6 +16,7 @@ library(dplyr)
 Our first data source is the Google Trends API. Suppose we are interested in the search trends
 for crime and loans in Illinois in the year 2020. We could find this using the following code:
 ```{r}
+set.seed(1)
 res <- gtrends(c("crime", "loans"),
                geo = "US-IL",
                time = "2020-01-01 2020-12-31",
@@ -47,9 +48,6 @@ var(res_time_w$crime) #67.36502
 mean(res_time_w$loans) #62.24528
 median(res_time_w$loans) #60
 var(res_time_w$loans) #98.72714
-
-
-#Molly's answers: 55.28302, 55, 84.28374; 67.13208, 65, 102.2707
 ```
 
 • Which cities (locations) have the highest search frequency for loans? Note that there
@@ -238,7 +236,6 @@ anti_join(res_city_w, acs_il, by="location")
 anti_join(acs_il, res_city_w, by="location")
 ```
 
-There are 9 cities in the Google Trends data that can't be matched to the ACS dataset, while there are 1120 locations in the ACS dataset for which there are no Google Trends data.
 
 ``` {r}
 GT_ACS1 <- res_city_w %>% inner_join(acs_il, by="location")
@@ -260,18 +257,24 @@ GT_ACS1$income2[GT_ACS1$hh_income < median_income] <- "Below avg median HH incom
 GT_ACS1$income2[GT_ACS1$hh_income > median_income] <- "Above avg median HH income"
 table(GT_ACS1$income2)
 
+GT_ACS1 %>% summarise(crime_hits = mean(crime, na.rm=T),
+                                            loans_hits = mean(loans, na.rm=T))
 GT_ACS1 %>% group_by(income2) %>% summarise(crime_hits = mean(crime, na.rm=T),
                                             loans_hits = mean(loans, na.rm=T))
 ```
 
-TKTKTK add things here
+In general, there are more hits for "loans" than there are for "crime" in Illinois cities. This is true for cities with both above and below average median household incomes. However, people in cities with a below average income appear to be searching for "crime" more than those in cities with an above average income, while people in cities with above average incomes appear to be searching for "loans" more than those in cities with below average incomes. Additionally, in cities with above average median household incomes, the difference between the search volume for loans and for crime is greater than in cities with below average median household incomes.
 
 • Is there a relationship between the median household income and the search popularity of
 the Google trends terms? Describe the relationship and use a scatterplot with qplot().
 ```{r}
-qplot(hh_income, crime, data=GT_ACS1)
-qplot(hh_income, loans, data=GT_ACS1)
+qplot(hh_income, crime, data=GT_ACS1) + geom_smooth(method='lm') + xlab("Median Household Income") +
+  ylab("Search Hits (relative)") + ggtitle("Search Hits for 'Crime' by City Median Household Income")
+qplot(hh_income, loans, data=GT_ACS1) + geom_smooth(method='lm') + xlab("Median Household Income") +
+  ylab("Search Hits (relative)") + ggtitle("Search Hits for 'Loans' by City Median Household Income")
 ```
+
+As household income increases, search volume for "crime" appears to decrease slightly. By contrast, as household income increases, search volune for "loans" increases.
 
 ###Repeat the above steps using the covid data and the ACS data.
 ```{r}
@@ -283,16 +286,23 @@ head(GT_ACS2)
 #calculate average median income
 median_income <- median(GT_ACS2$hh_income, na.rm=T)
 
-
 #note that the median income is not included here
 GT_ACS2$income2[GT_ACS2$hh_income < median_income] <- "Below avg median HH income"
 GT_ACS2$income2[GT_ACS2$hh_income > median_income] <- "Above avg median HH income"
 table(GT_ACS2$income2)
 
+GT_ACS2 %>% summarise(covid_hits = mean(covid, na.rm=T),
+                                            mask_hits = mean(mask, na.rm=T))
 GT_ACS2 %>% group_by(income2) %>% summarise(covid_hits = mean(covid, na.rm=T),
                                             mask_hits = mean(mask, na.rm=T))
 
-qplot(hh_income, covid, data=GT_ACS2)
-qplot(hh_income, mask, data=GT_ACS2)
+qplot(hh_income, covid, data=GT_ACS2) + geom_smooth(method='lm') + xlab("Median Household Income") +
+  ylab("Search Hits (relative)") + ggtitle("Search Hits for 'Covid' by City Median Household Income")
+qplot(hh_income, mask, data=GT_ACS2) + geom_smooth(method='lm') + xlab("Median Household Income") +
+  ylab("Search Hits (relative)") + ggtitle("Search Hits for 'Mask' by City Median Household Income")
 
 ```
+
+The search volume is quite similar between "covid" and "mask" in Illinois cities. Looking by income, there is little difference in search volume for "covid" by household income, while cities with a below average median household income are slightly more likely to have searched for "mask" than cities with an above average median household income.
+
+In looking deeper at search trends for "covid," it appears that as median household income increases, there is a slight increase in search volume for "covid." The opposite is true for "mask," where as median household income increases, there is a very slight decrease in search volume for "mask."
