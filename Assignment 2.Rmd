@@ -15,7 +15,7 @@ library(dplyr)
 #Pulling from APIs
 Our first data source is the Google Trends API. Suppose we are interested in the search trends
 for crime and loans in Illinois in the year 2020. We could find this using the following code:
-```{r}
+```{r, cache=TRUE}
 set.seed(1)
 res <- gtrends(c("crime", "loans"),
                geo = "US-IL",
@@ -26,13 +26,13 @@ plot(res)
 
 Answer the following questions for the keywords “crime” and “loans”.
 
-• Find the mean, median and variance of the search hits for the keywords.
+• Find the mean, median and variance of the search hits for the keywords:
 
 CRIME:                     LOANS
 Mean: 51.01887             Mean: 62.24528
 Median: 51                 Median: 60
 Var.: 67.36502             Var: 98.72714
-```{r}
+```{r, cache=TRUE}
 head(res$interest_over_time)
 res_time <- as_tibble(res$interest_over_time)
 glimpse(res_time)
@@ -56,8 +56,8 @@ that city. It might be easier to answer this question if we had the search hits 
 both search terms in two separate variables. That is, each row would represent a unique
 city.
 
-- Long Lake, Peotone, Rosemont, East Saint Louis, and Ford Heights are the top 5 locations for 'loans' search hits. 
-```{r}
+- Evergreen Park, Long Lake, Rosemont, Peotone, and Coal City are the top 5 locations for 'loans' search hits. 
+```{r, cache=TRUE}
 head(res$interest_by_city)
 res_city <- as_tibble(res$interest_by_city)
 glimpse(res_city)
@@ -73,7 +73,7 @@ na.omit(loansbycity)
 ```
 
 • Is there a relationship between the search intensities between the two keywords we used?
-```{r}
+```{r, cache=TRUE}
 res_both_w <- res_city_w %>% 
   drop_na() 
 res_both_w
@@ -82,7 +82,9 @@ res_both_w
 In the cities that have data for both search keywords, the search intensity for "loans" is greater than it is for "crime." We can also see looking in general in the state of Illinois that throughout 2020, with the exception of the spike in roughly June 2020, the search intensity for "loans" is greater than the search intensity for "crime."
 
 ###Repeat the above for keywords related to covid. Make sure you use multiple keywords like we did above. Try several different combinations and think carefully about words that might make sense within this context.
-```{r}
+
+"Vaccine"[s], "test"[ing], "lockdown", [social] "distancing", and "mask"[s] are all words that were commonly used COVID-related media in 2020. "China" and the U.S. Presidential electoral candidates were prominent politically-oriented buzzwords during the same time period. 
+```{r, cache=TRUE}
 covid.search1 <- gtrends(c("covid", "vaccine"),
 geo = "US-IL",
 time = "2020-01-01 2020-12-31",
@@ -138,7 +140,7 @@ time = "2020-01-01 2020-12-31",
 low_search_volume = TRUE)
 plot(covid.search8)
 ```
-```{r}
+```{r, cache=TRUE}
 rm(covid.search1,covid.search2, covid.search3, covid.search5, covid.search6, covid.search7, covid.search8)
 
 head(covid.search4$interest_over_time)
@@ -161,8 +163,10 @@ mean(covid_time_w$mask) #10.43396
 median(covid_time_w$mask) #9
 var(covid_time_w$mask) #40.51959
 ```
-
-```{r}
+ 
+ "Mask" shows the strongest frequency and closely resembles the "covid" search hits in its pattern. 
+ XX, XX, XX, XX, and XX are the top 5 locations for 'mask' search hits. 
+```{r, cache=TRUE}
 head(covid.search4$interest_by_city)
 covid_city <- as_tibble(covid.search4$interest_by_city)
 glimpse(covid_city)
@@ -183,13 +187,13 @@ na.omit(maskbycity)
 Once you have a Census access key, save it as a text file, then read this key in the cs_key object. We
 will use this object in all following API queries. 
 
-```{r}
+```{r, cache=TRUE}
 cs_key <- read_file("~/Downloads/census-key.txt")
 ```
 
 In the following, we request basic socio-demographic information (population, median age,
 median household income, income per capita) for cities and villages in the state of Illinois.
-```{r}
+```{r, cache=TRUE}
 acs_il <- getCensus(name = "acs/acs5",
                     vintage = 2020,
                     vars = c("NAME",
@@ -204,13 +208,13 @@ head(acs_il)
 ```
 
 Convert values that represent missings to NAs.
-```{r}
+```{r, cache=TRUE}
 acs_il[acs_il == -666666666] <- NA
 ```
 
 Now, it might be useful to rename the socio-demographic variables (B01001_001E etc.) in our
 data set and assign more meaningful names.
-```{r}
+```{r, cache=TRUE}
 acs_il <-
   acs_il %>%
   rename(pop = B01001_001E,
@@ -225,7 +229,7 @@ data.
 • First, check how many cities don’t appear in both data sets, i.e. cannot be matched.
 Then, create a new data set by joining the Google Trends and the ACS data. Keep only
 cities that appear in both data sets.
-```{r}
+```{r, cache=TRUE}
 head(res_city)
 head(acs_il)
 
@@ -237,7 +241,7 @@ anti_join(acs_il, res_city_w, by="location")
 ```
 
 
-``` {r}
+```{r, cache=TRUE}
 GT_ACS1 <- res_city_w %>% inner_join(acs_il, by="location")
 head(GT_ACS1)
 ```
@@ -248,7 +252,7 @@ household income. When building your pipe, start with creating the grouping vari
 and then proceed with the remaining tasks. What conclusions might you draw from
 this?
 
-```{r}
+```{r, cache=TRUE}
 #calculate average median income
 median_income <- median(GT_ACS1$hh_income, na.rm=T)
 
@@ -267,7 +271,7 @@ In general, there are more hits for "loans" than there are for "crime" in Illino
 
 • Is there a relationship between the median household income and the search popularity of
 the Google trends terms? Describe the relationship and use a scatterplot with qplot().
-```{r}
+```{r, cache=TRUE}
 qplot(hh_income, crime, data=GT_ACS1) + geom_smooth(method='lm') + xlab("Median Household Income") +
   ylab("Search Hits (relative)") + ggtitle("Search Hits for 'Crime' by City Median Household Income")
 qplot(hh_income, loans, data=GT_ACS1) + geom_smooth(method='lm') + xlab("Median Household Income") +
@@ -277,7 +281,7 @@ qplot(hh_income, loans, data=GT_ACS1) + geom_smooth(method='lm') + xlab("Median 
 As household income increases, search volume for "crime" appears to decrease slightly. By contrast, as household income increases, search volune for "loans" increases.
 
 ###Repeat the above steps using the covid data and the ACS data.
-```{r}
+```{r, cache=TRUE}
 
 #merge data
 GT_ACS2 <- covid_city_w %>% inner_join(acs_il, by="location")
