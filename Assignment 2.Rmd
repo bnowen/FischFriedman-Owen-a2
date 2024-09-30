@@ -70,8 +70,6 @@ loansbycity <-  res_city_w %>%
   arrange(desc(loans))
 
 na.omit(loansbycity)
-
-#Molly's answers: Long Lake, oak Lawn, Rosemont, Coal City, Ford Heights
 ```
 
 • Is there a relationship between the search intensities between the two keywords we used?
@@ -80,6 +78,8 @@ res_both_w <- res_city_w %>%
   drop_na() 
 res_both_w
 ```
+
+In the cities that have data for both search keywords, the search intensity for "loans" is greater than it is for "crime." We can also see looking in general in the state of Illinois that throughout 2020, with the exception of the spike in roughly June 2020, the search intensity for "loans" is greater than the search intensity for "crime."
 
 ###Repeat the above for keywords related to covid. Make sure you use multiple keywords like we did above. Try several different combinations and think carefully about words that might make sense within this context.
 ```{r}
