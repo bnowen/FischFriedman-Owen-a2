@@ -12,6 +12,8 @@ library(censusapi)
 library(dplyr)
 ```
 
+Link to GitHub repository: https://github.com/bnowen/FischFriedman-Owen-a2
+
 # Pulling from APIs
 Our first data source is the Google Trends API. Suppose we are interested in the search trends
 for crime and loans in Illinois in the year 2020. We could find this using the following code:
