@@ -12,11 +12,10 @@ library(censusapi)
 library(dplyr)
 ```
 
-#Pulling from APIs
+# Pulling from APIs
 Our first data source is the Google Trends API. Suppose we are interested in the search trends
 for crime and loans in Illinois in the year 2020. We could find this using the following code:
 ```{r, cache=TRUE}
-set.seed(1)
 res <- gtrends(c("crime", "loans"),
                geo = "US-IL",
                time = "2020-01-01 2020-12-31",
@@ -28,10 +27,6 @@ Answer the following questions for the keywords “crime” and “loans”.
 
 • Find the mean, median and variance of the search hits for the keywords:
 
-CRIME:                     LOANS
-Mean: 49.81132             Mean: 61.01887
-Median: 50                 Median: 58
-Var.: 63.92525             Var: 103.5573
 ```{r, cache=TRUE}
 head(res$interest_over_time)
 res_time <- as_tibble(res$interest_over_time)
@@ -40,15 +35,20 @@ glimpse(res_time)
 res_time_w <- spread(res_time, key = keyword, value = hits)
 head(res_time_w)
 
-mean(res_time_w$crime) #49.81132
-median(res_time_w$crime) #50
-var(res_time_w$crime) #63.92525
+mean_crime <- round(mean(res_time_w$crime),5)
+median_crime <- median(res_time_w$crime)
+var_crime <- round(var(res_time_w$crime),5)
+mean_crime; median_crime; var_crime
 
-
-mean(res_time_w$loans) #61.01887
-median(res_time_w$loans) #58
-var(res_time_w$loans) #103.5573
+mean_loans <- round(mean(res_time_w$loans),5)
+median_loans <- median(res_time_w$loans) 
+var_loans <- round(var(res_time_w$loans),5)
+mean_loans; median_loans; var_loans
 ```
+
+For the keyword "crime" in Illinois in 2020, the mean search volume is `r mean_crime`, the median search volume is `r median_crime`, and the variance is `r var_crime`.
+
+For the keyword "loans" in Illinois in 2020, the mean search volume is `r mean_loans`, the median search volume is `r median_loans`, and the variance is `r var_loans`.
 
 • Which cities (locations) have the highest search frequency for loans? Note that there
 might be multiple rows for each city if there were hits for both “crime” and “loans” in
@@ -70,7 +70,14 @@ loansbycity <-  res_city_w %>%
   arrange(desc(loans))
 
 na.omit(loansbycity)
+top1 <- na.omit(loansbycity)[1,1]
+top2 <- na.omit(loansbycity)[2,1]
+top3 <- na.omit(loansbycity)[3,1]
+top4 <- na.omit(loansbycity)[4,1]
+top5 <- na.omit(loansbycity)[5,1]
 ```
+
+The top 5 locations for 'loans' search hits are `r top1`, `r top2`, `r top3`, `r top4`, and `r top5`.
 
 • Is there a relationship between the search intensities between the two keywords we used?
 ```{r, cache=TRUE}
@@ -81,7 +88,7 @@ res_both_w
 
 In the cities that have data for both search keywords, the search intensity for "loans" is greater than it is for "crime." We can also see looking in general in the state of Illinois that throughout 2020, with the exception of the spike in roughly June 2020, the search intensity for "loans" is greater than the search intensity for "crime."
 
-###Repeat the above for keywords related to covid. Make sure you use multiple keywords like we did above. Try several different combinations and think carefully about words that might make sense within this context.
+### Repeat the above for keywords related to covid. Make sure you use multiple keywords like we did above. Try several different combinations and think carefully about words that might make sense within this context.
 
 "Vaccine"[s], "test"[ing], "lockdown", [social] "distancing", and "mask"[s] are all words that were commonly used COVID-related media in 2020. "China" and the U.S. Presidential electoral candidates were prominent politically-oriented buzzwords during the same time period. 
 ```{r, cache=TRUE}
@@ -165,7 +172,6 @@ var(covid_time_w$mask) #37.61393
 ```
  
  "Mask" crested in April 2020 and closely resembles the "covid" search hits in its pattern. 
- Minier, Waterman, Oakdale, Palos Heights, and Philo are the top 5 locations for 'mask' search hits. 
 ```{r, cache=TRUE}
 head(covid.search4$interest_by_city)
 covid_city <- as_tibble(covid.search4$interest_by_city)
@@ -179,10 +185,16 @@ maskbycity <-  covid_city_w %>%
   arrange(desc(mask))
 
 na.omit(maskbycity)
-#Top 5 cities for 'mask' search results are Minier, Oakdale, Bushnell, Keyesport, Forsyth
+top1 <- na.omit(maskbycity)[1,1]
+top2 <- na.omit(maskbycity)[2,1]
+top3 <- na.omit(maskbycity)[3,1]
+top4 <- na.omit(maskbycity)[4,1]
+top5 <- na.omit(maskbycity)[5,1]
 ```
 
-#Google Trends + ACS
+The top 5 locations for 'loans' search hits are `r top1`, `r top2`, `r top3`, `r top4`, and `r top5`.
+
+# Google Trends + ACS
 
 Once you have a Census access key, save it as a text file, then read this key in the cs_key object. We
 will use this object in all following API queries. 
@@ -236,10 +248,19 @@ head(acs_il)
 #create location variable that removes the type of location and state name from the label
 acs_il$location <- gsub("\\s\\S+,.+$", "", acs_il$NAME)
 
-anti_join(res_city_w, acs_il, by="location")
-anti_join(acs_il, res_city_w, by="location")
+data1 <- anti_join(res_city_w, acs_il, by="location")
+nrow(data1)
 ```
 
+There are 9 cities in the Google Trends data that aren't in the ACS data.
+
+``` {r, cache=TRUE}
+
+data2 <- anti_join(acs_il, res_city_w, by="location")
+nrow(data2)
+```
+
+There are 1118 cities in the ACS data that aren't in the Google Trends data.
 
 ```{r, cache=TRUE}
 GT_ACS1 <- res_city_w %>% inner_join(acs_il, by="location")
@@ -280,7 +301,7 @@ qplot(hh_income, loans, data=GT_ACS1) + geom_smooth(method='lm') + xlab("Median 
 
 As household income increases, search volume for "crime" appears to decrease slightly. By contrast, as household income increases, search volune for "loans" increases.
 
-###Repeat the above steps using the covid data and the ACS data.
+### Repeat the above steps using the covid data and the ACS data.
 ```{r, cache=TRUE}
 
 #merge data
